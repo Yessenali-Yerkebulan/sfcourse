@@ -22,7 +22,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $usename;
+    private $username;
 
     /**
      * @ORM\Column(type="json")
@@ -40,14 +40,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getUsename(): ?string
+    /**
+     * @deprecated since Symfony 5.3, use getUserIdentifier instead
+     */
+    public function getUsername(): string
     {
-        return $this->usename;
+        return (string) $this->username;
     }
 
-    public function setUsename(string $usename): self
+    public function setUsername(string $username): self
     {
-        $this->usename = $usename;
+        $this->username = $username;
 
         return $this;
     }
@@ -59,15 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->usename;
-    }
-
-    /**
-     * @deprecated since Symfony 5.3, use getUserIdentifier instead
-     */
-    public function getUsername(): string
-    {
-        return (string) $this->usename;
+        return (string) $this->username;
     }
 
     /**
