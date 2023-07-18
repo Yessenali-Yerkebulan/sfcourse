@@ -3,11 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Post;
+use App\Form\PostType;
 use App\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 /**
  * @Route("/post", name="post.")
@@ -22,7 +24,6 @@ class PostController extends AbstractController
     public function index(PostRepository $postRepository): Response
     {
         $posts = $postRepository->findAll();
-        dump($posts);
         return $this->render('post/index.html.twig', [
             'posts'=>$posts
         ]);
@@ -37,16 +38,26 @@ class PostController extends AbstractController
     {
         //create a new post with title
         $post = new Post();
-        $post->setTitle('This is going to be a title');
+        $form = $this->createForm(PostType::class, $post);
 
-        // entity manager
-        $em = $this->getDoctrine()->getManager();
+        $form->handleRequest($request);
 
-        $em->persist($post);
-        $em->flush();
+        if($form->isSubmitted()){
+            // entity manager
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($post);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('post.index'));
+        }
+
+
 
         //return a response
-        return $this->redirect($this->generateUrl('post.index'));
+        return $this->render('post/create.html.twig', [
+            'form'=>$form->createView()
+        ]);
     }
 
     /**
@@ -72,7 +83,7 @@ class PostController extends AbstractController
         $em->remove($post);
         $em->flush();
 
-        $this->addFlash('success', message:'Post was removed');
+        $this->addFlash('success', 'Post was removed');
 
         return $this->redirect($this->generateUrl('post.index'));
     }
