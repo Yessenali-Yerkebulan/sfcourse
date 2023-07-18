@@ -19,7 +19,7 @@ class Post
     private $id;
 
     /**
-     * @Assert|NotBlank()
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255)
      */
     private $title;
