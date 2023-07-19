@@ -30,6 +30,20 @@ class PostRepository extends ServiceEntityRepository
         }
     }
 
+    public function findPostWithCategory(int $id){
+        $qb = $this->createQueryBuilder('p');
+        $qb->select('p.title')
+            ->addSelect('p.id AS post_id')
+            ->addSelect('c.name')
+            ->addSelect('c.id AS cat_id')
+            ->innerJoin('p.category', 'c')
+            ->where('p.id=:id')
+            ->setParameter('id', $id);
+
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function remove(Post $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
